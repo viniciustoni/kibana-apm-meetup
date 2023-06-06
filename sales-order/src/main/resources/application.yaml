@@ -1,0 +1,44 @@
+server:
+  port: 8082
+
+spring:
+  application:
+    name: sales-order
+  datasource:
+    url: jdbc:postgresql://localhost:5432/meetup
+    username: postgres
+    password: meetup00
+  jpa:
+    properties:
+      hibernate.dialect: org.hibernate.dialect.PostgreSQLDialect
+
+server.servlet.context-path: /api
+
+management.endpoints.web.exposure.include: '*'
+
+springdoc:
+  show-actuator: true
+  swagger-ui:
+    displayRequestDuration: true
+
+app:
+  product-service:
+    host: http://localhost:8081
+    products:
+      reserve-fixing-n-plus-one: /api/v1/products/reserve-fixing-n-plus-one
+      getByIds: /api/v1/products
+    product:
+      reserve: /api/v1/product/reserve
+      getById: /api/v1/product/{productId}
+
+elastic:
+  apm:
+    enabled: true
+    server-url: http://localhost:8200
+    service-name: ${spring.application.name}
+    secret-token: meetup-kibana-apm-secret
+    environment: meetup-kibana-apm
+    application-packages: com.vagai
+    log-level: INFO
+    trace-methods: com.vagai.*
+    span-min-duration: 10ms

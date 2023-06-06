@@ -1,0 +1,98 @@
+version: '3.8'
+
+services:
+
+  ###########################################################################
+  #### Elasticsearch Docker Images: https://www.docker.elastic.co/       ####
+  ###########################################################################
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.8.0
+    container_name: elasticsearch
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -s http://localhost:9200/_cluster/health?wait_for_status=yellow&timeout=500ms" ]
+      retries: 300
+      interval: 1s
+    environment:
+      - "network.host=0.0.0.0"
+      - "transport.host=127.0.0.1"
+      - "http.host=0.0.0.0"
+      - "cluster.routing.allocation.disk.threshold_enabled=false"
+      - "discovery.type=single-node"
+      - "xpack.security.authc.anonymous.roles=remote_monitoring_collector"
+      - "xpack.security.authc.realms.file.file1.order=0"
+      - "xpack.security.authc.realms.native.native1.order=1"
+      - "xpack.security.enabled=true"
+      - "xpack.license.self_generated.type=trial"
+      - "xpack.security.authc.token.enabled=true"
+      - "xpack.security.authc.api_key.enabled=true"
+      - "logger.org.elasticsearch=${ES_LOG_LEVEL:-error}"
+      - "action.destructive_requires_name=false"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    cap_add:
+      - IPC_LOCK
+    volumes:
+      - "./config/elasticsearch/roles.yml:/usr/share/elasticsearch/config/roles.yml"
+      - "./config/elasticsearch/users.txt:/usr/share/elasticsearch/config/users"
+      - "./config/elasticsearch/users_roles.txt:/usr/share/elasticsearch/config/users_roles"
+    ports:
+      - 9200:9200
+
+  kibana:
+    container_name: kibana
+    image: docker.elastic.co/kibana/kibana:8.8.0
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -s http://localhost:5601/api/status | grep -q 'All services are available'" ]
+      retries: 300
+      interval: 1s
+    environment:
+      ELASTICSEARCH_HOSTS: '["http://elasticsearch:9200"]'
+      ELASTICSEARCH_USERNAME: "${KIBANA_ES_USER:-kibana_system_user}"
+      ELASTICSEARCH_PASSWORD: "${KIBANA_ES_PASS:-changeme}"
+      XPACK_FLEET_AGENTS_FLEET_SERVER_HOSTS: '["https://fleet-server:8220"]'
+      XPACK_FLEET_AGENTS_ELASTICSEARCH_HOSTS: '["http://elasticsearch:9200"]'
+    ports:
+      - 5601:5601
+    volumes:
+      - "./config/kibana/kibana.yml:/usr/share/kibana/config/kibana.yml"
+    depends_on:
+      elasticsearch: { condition: service_healthy }
+  apm-server:
+    container_name: apm-server
+    image: docker.elastic.co/apm/apm-server:8.8.0
+    ports:
+      - 8200:8200
+    depends_on:
+      elasticsearch: { condition: service_healthy }
+      kibana: { condition: service_healthy }
+    command: >
+      apm-server -e
+        -E apm-server.rum.enabled=true
+        -E setup.kibana.host=kibana:5601
+        -E setup.template.settings.index.number_of_replicas=0
+        -E apm-server.kibana.enabled=true
+        -E apm-server.kibana.host=kibana:5601
+        -E output.elasticsearch.hosts=["elasticsearch:9200"]
+        -E output.elasticsearch.username="admin"
+        -E output.elasticsearch.password="changeme"
+
+  ###########################################################################
+  ###                    END OF ELASTICSTACK                             ####
+  ###########################################################################
+  
+  postgresdb-meetup:
+    image: "postgres:latest"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=meetup00
+      - POSTGRES_DB=meetup
+    ports:
+      - "5432:5432"  
+    volumes:
+      - ./config/postgres/init_products.sql:/docker-entrypoint-initdb.d/init_products.sql
+      - ./config/postgres/init_sales_order.sql:/docker-entrypoint-initdb.d/init_sales_order.sql

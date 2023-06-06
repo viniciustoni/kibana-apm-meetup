@@ -1,0 +1,22 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: sales-product
+  datasource:
+    url: jdbc:postgresql://localhost:5432/meetup
+    username: postgres
+    password: meetup00
+  jpa:
+    properties:
+      hibernate.dialect: org.hibernate.dialect.PostgreSQLDialect
+
+server.servlet.context-path: /api
+
+management.endpoints.web.exposure.include: '*'
+
+springdoc:
+  show-actuator: true
+  swagger-ui:
+    displayRequestDuration: true
