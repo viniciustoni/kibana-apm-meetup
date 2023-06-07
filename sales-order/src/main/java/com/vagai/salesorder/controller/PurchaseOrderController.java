@@ -29,12 +29,17 @@ public class PurchaseOrderController {
     }
 
     @PostMapping("/purchase-order-fixing-n-plus-one")
-    public ResponseEntity<PurchaseOrderDto> createPurchaseOrderFixNPlusOneRestCall(@RequestBody PurchaseOrderDto purchaseOrderDto) {
-        return ok(purchaseOrderService.createPurchaseOrderFixNPlusOneRestCall(purchaseOrderDto));
+    public ResponseEntity<PurchaseOrderDto> createPurchaseOrderFixingNPlusOneRestCall(@RequestBody PurchaseOrderDto purchaseOrderDto) {
+        return ok(purchaseOrderService.createPurchaseOrderFixingNPlusOneRestCall(purchaseOrderDto));
     }
 
     @GetMapping("/purchase-orders")
     public ResponseEntity<List<PurchaseOrderDto>> getPurchaseOrderByClientId(@RequestParam("clientId") Long clientId) {
         return ok(purchaseOrderService.getPurchaseOrderByClientId(clientId));
+    }
+
+    @GetMapping("/purchase-orders-fixing-n-plus-one")
+    public ResponseEntity<List<PurchaseOrderDto>> getPurchaseOrderByClientIdFixingNPlusOne(@RequestParam("clientId") Long clientId) {
+        return ok(purchaseOrderService.getPurchaseOrderByClientIdFixingNPlusOne(clientId));
     }
 }

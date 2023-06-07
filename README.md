@@ -10,14 +10,15 @@ Together with the service this project contains the docker-compose files that yo
 
 - Maven 3
 - Spring-boot 3.1.0
+- Kibana APM
+- Postgres
+- Docker compose
 
 # How to test it
 
 - Clone the project into your workspace
 - mvn clean verify
-
-You will see that on your target/Generated-sources a folder called contracts and some generated tests code that is checking you API contract
-
-# Link for the presentation
-
-https://www.youtube.com/watch?v=pyA6-tVg2yI
+- Start the docker images present on docker/docker-compose.yaml `docker compose up`
+- Configure the APM into your kibana, you can access the kibana-ui via: http://localhost:5601/
+- Start the sales-products app, swagger UI: http://localhost:8081/api/swagger-ui/index.html
+- Start the sales-order app, swagger UI: http://localhost:8082/api/swagger-ui/index.html

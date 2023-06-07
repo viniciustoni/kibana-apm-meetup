@@ -48,4 +48,9 @@ public class ProductController {
     public ResponseEntity<ProductDto> getProductById(@PathVariable Long productId) {
         return ResponseEntity.ok(productService.getProductById(productId));
     }
+
+    @GetMapping("/product/{productId}/slow")
+    public ResponseEntity<ProductDto> getProductByIdSlowMethod(@PathVariable Long productId) {
+        return ResponseEntity.ok(productService.getProductByIdSlow(productId));
+    }
 }

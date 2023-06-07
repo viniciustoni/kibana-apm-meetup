@@ -42,6 +42,12 @@ public class ProductService {
                 .orElseThrow(() -> new ProductNotFoundException(productId));
     }
 
+    public ProductDto getProductByIdSlow(Long productId) {
+        return productRepository.findById(productId)
+                .map(productMapper::mapToProductDtoSlow)
+                .orElseThrow(() -> new ProductNotFoundException(productId));
+    }
+
     @Transactional
     public ProductDto reserveProduct(ReserveProductDto reserveProductDto) {
         return productRepository.findById(reserveProductDto.productId())

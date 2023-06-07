@@ -38,7 +38,7 @@ public class PurchaseOrderService {
     }
 
     @Transactional
-    public PurchaseOrderDto createPurchaseOrderFixNPlusOneRestCall(PurchaseOrderDto purchaseOrderDto) {
+    public PurchaseOrderDto createPurchaseOrderFixingNPlusOneRestCall(PurchaseOrderDto purchaseOrderDto) {
         PurchaseOrder purchaseOrder = purchaseOrderRepository.save(purchaseOrderMapper.mapToPurchaseOrderFixNPlusOneRestCall(purchaseOrderDto));
 
         purchaseOrder.getPurchaseOrderItems()
@@ -51,6 +51,13 @@ public class PurchaseOrderService {
 
     public List<PurchaseOrderDto> getPurchaseOrderByClientId(Long clientId) {
         return purchaseOrderRepository.findByClientId(clientId)
+                .stream()
+                .map(purchaseOrderMapper::mapToPurchaseOrderDto)
+                .collect(toList());
+    }
+
+    public List<PurchaseOrderDto> getPurchaseOrderByClientIdFixingNPlusOne(Long clientId) {
+        return purchaseOrderRepository.findByClientIdWithItems(clientId)
                 .stream()
                 .map(purchaseOrderMapper::mapToPurchaseOrderDto)
                 .collect(toList());
