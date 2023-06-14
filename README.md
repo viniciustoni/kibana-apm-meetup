@@ -26,10 +26,12 @@ Together with the service this project contains the docker-compose files that yo
 # Java agent:
 
 In case you want to use the APM agent via java agent flag, please add this configuration for the VM Options.
-
--javaagent:$PROJECT_HOME\kibana-apm-meetup\elastic-apm-agent-1.39.0.jar -Delastic.apm.server_url=http://localhost:8200 
+```
+-javaagent:$PROJECT_HOME\kibana-apm-meetup\elastic-apm-agent-1.39.0.jar 
+-Delastic.apm.server_url=http://localhost:8200 
 -Delastic.apm.service_name=sales-product 
 -Delastic.apm.application_packages=com.vagai 
 -Delastic.apm.environment=meetup-kibana-apm 
 -Delastic.apm.trace_methods=com.vagai.*
 -Delastic.apm.span_min_duration=10ms
+```
