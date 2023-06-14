@@ -21,10 +21,10 @@
             <artifactId>spring-cloud-starter-contract-verifier</artifactId>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>co.elastic.apm</groupId>
-            <artifactId>apm-agent-attach</artifactId>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>co.elastic.apm</groupId>-->
+<!--            <artifactId>apm-agent-attach</artifactId>-->
+<!--        </dependency>-->
     </dependencies>
 
     <build>
